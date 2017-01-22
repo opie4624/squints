@@ -9,6 +9,12 @@ use Mix.Config
 config :squints,
   ecto_repos: [Squints.Repo]
 
+config :squints,
+  fudge_factor: 1,
+  default_delay: 12 * 60 * 60 * 1000,
+  location_url: "https://spectacles.com/locations",
+  referrer_url: "https://spectacles.com/map/"
+
 # Configures the endpoint
 config :squints, Squints.Endpoint,
   url: [host: "localhost"],
