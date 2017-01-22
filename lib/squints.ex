@@ -14,6 +14,7 @@ defmodule Squints do
       supervisor(Squints.Endpoint, []),
       # Start your own worker by calling: Squints.Worker.start_link(arg1, arg2, arg3)
       # worker(Squints.Worker, [arg1, arg2, arg3]),
+      supervisor(Squints.Poller.Supervisor, []),
     ]
 
     # See http://elixir-lang.org/docs/stable/elixir/Supervisor.html
