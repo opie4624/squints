@@ -40,4 +40,5 @@ config :squints, Squints.Repo,
   password: "postgres",
   database: "squints_dev",
   hostname: "localhost",
-  pool_size: 10
+  pool_size: 10,
+  types: Squints.PostgresTypes
