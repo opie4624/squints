@@ -119,4 +119,25 @@ defmodule Squints.Poller.Worker do
     schedule_poll(countdown)
     store_coordinates(coords)
   end
+
+  defp store_coordinates([]), do: :ok
+  defp store_coordinates(coords) when is_list(coords) do
+    Enum.each(coords, fn(coord) -> store_coordinates(coord) end)
+  end
+  defp store_coordinates(%{"lat" => lat, "lng" => lng}) do
+    coord = %Geo.Point{coordinates: {lng, lat}, srid: 4326}
+    entry = %{alive: true, loc: coord}
+    #query = from b in Bot,
+    #  where: Bot.within(coord, Application.get_env(:squints, :fudge_factor))
+    #result =
+    #  case Repo.one(query) do
+    #    :nil -> %Bot
+    #end
+
+    Logger.debug(coord)
+  end
+  defp store_coordinates(coord) do
+    Logger.debug(Poison.encode!(coord))
+  end
+
 end
