@@ -62,7 +62,19 @@ defmodule Squints.Poller.Worker do
   defp schedule(0), do: schedule(Application.get_env(:squints, :default_delay, 60000))
   defp schedule(delay), do: Process.send_after(__MODULE__, :poll, delay)
 
-  defp do_poll() do
-    Logger.debug "Called do_poll"
+  defp do_poll do
+    location_url = Application.get_env(:squints, :location_url, "http://localhost/locations")
+    %HTTPotion.Response{body: json, status_code: 200} =
+      case Application.get_env(:squints, :referrer_url, :nil) do
+        :nil ->
+          HTTPotion.get(location_url)
+        referrer_url ->
+          HTTPotion.get(location_url, headers: [referrer: referrer_url])
+      end
+
+    Logger.debug(Time.utc_now)
+    Logger.debug(json)
+
+    Poison.decode(json)
   end
 end
