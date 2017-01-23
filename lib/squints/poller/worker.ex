@@ -41,7 +41,7 @@ defmodule Squints.Poller.Worker do
   def handle_cast({:schedule, delay}, %{table: table, timers: timers}) do
     timer = schedule(delay)
 
-    {:ok, new_state(table, [timer|timers])}
+    {:noreply, new_state(state, new_timer)}
   end
 
   def handle_info(:poll, %{table: table, timers: timers}) do
@@ -54,9 +54,18 @@ defmodule Squints.Poller.Worker do
 
   # Private API
 
+  defp new_state(%{table: table, timers: timers}), do: new_state(table, timers)
+  defp new_state(%{table: table, timers: timers}, new_timers),
+    do: check_timers(%{table: table, timers: [new_timers|timers]})
   defp new_state(table, timers) do
     :ets.insert(table, timers: timers)
     %{table: table, timers: timers}
+  end
+
+  defp check_timers(table, timers), do: new_state(%{table: table, timers: check_timers(timers)})
+  defp check_timers(%{table: table, timers: timers}), do: check_timers(table, timers)
+  defp check_timers(timers) when is_list(timers) do
+    Enum.filter(timers, fn(x) -> Process.read_timer(x) end)
   end
 
   defp schedule(0), do: schedule(Application.get_env(:squints, :default_delay, 60000))
