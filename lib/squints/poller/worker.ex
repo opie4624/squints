@@ -58,6 +58,7 @@ defmodule Squints.Poller.Worker do
 
   def handle_cast(:poll, state) do
     do_poll()
+    |> handle_json()
 
     {:noreply, state}
   end
@@ -112,5 +113,10 @@ defmodule Squints.Poller.Worker do
     Logger.debug(json)
 
     Poison.decode(json)
+  end
+
+  defp handle_json({:ok, %{"coordinates" => coords, "countdown" => countdown}}) do
+    schedule_poll(countdown)
+    store_coordinates(coords)
   end
 end
