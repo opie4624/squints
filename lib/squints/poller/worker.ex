@@ -139,8 +139,10 @@ defmodule Squints.Poller.Worker do
       |> Repo.insert_or_update
 
     Logger.debug(coord)
+    Logger.debug("Ins/Upd: #{result}")
   end
   defp store_coordinates(coord) do
+    Logger.error("Coordinate not in known format.")
     Logger.debug(Poison.encode!(coord))
   end
 
