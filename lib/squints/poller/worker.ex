@@ -9,7 +9,7 @@ defmodule Squints.Poller.Worker do
 
   # Client API
 
-  def start_link(state, opts \\ []) do
+  def start_link(state, opts \\ [name: __MODULE__]) do
     GenServer.start_link(__MODULE__, state, opts)
   end
 
@@ -24,10 +24,10 @@ defmodule Squints.Poller.Worker do
   end
 
   def poll do
-    GenServer.cast(PollerWorker, :poll)
+    GenServer.cast(__MODULE__, :poll)
 
   def schedule_poll(delay) do
-    GenServer.cast(PollerWorker, {:schedule, delay})
+    GenServer.cast(__MODULE__, {:schedule, delay})
   end
 
   # Server API
@@ -60,7 +60,7 @@ defmodule Squints.Poller.Worker do
   end
 
   defp schedule(0), do: schedule(Application.get_env(:squints, :default_delay, 60000))
-  defp schedule(delay), do: Process.send_after(PollerWorker, :poll, delay)
+  defp schedule(delay), do: Process.send_after(__MODULE__, :poll, delay)
 
   defp do_poll() do
     Logger.debug "Called do_poll"
