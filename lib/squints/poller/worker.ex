@@ -17,8 +17,8 @@ defmodule Squints.Poller.Worker do
   def init(%{table: table}) do
     case :ets.lookup(table, :timers) do
       [] ->
-        timer = schedule(5000)
-        {:ok, new_state(table, [timer])}
+        poll()
+        {:ok, new_state(table, [])}
       [timers: timers] ->
         {:ok, new_state(table, timers)}
     end
@@ -76,7 +76,7 @@ defmodule Squints.Poller.Worker do
   end
 
   def handle_info(:poll, state) do
-    poll
+    poll()
 
     {:noreply, state}
   end
