@@ -90,6 +90,14 @@ defmodule Squints.Poller.Worker do
     {:noreply, state}
   end
 
+  def terminate(:shutdown, %{timers: timers}) do
+    cancel_timers(timers)
+    :ok
+  end
+  def terminate(_reason, _state) do
+    :ok
+  end
+
   # Private API
 
   defp new_state(%{table: table, timers: timers}), do: new_state(table, timers)
