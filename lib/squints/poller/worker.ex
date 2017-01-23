@@ -2,8 +2,9 @@ defmodule Squints.Poller.Worker do
   use GenServer
 
   import Ecto.Query
-  import Squints.Repo
-  import Squints.Bot
+
+  alias Squints.Repo
+  alias Squints.Bot
 
   require Logger
 
