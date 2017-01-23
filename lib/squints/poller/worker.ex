@@ -128,12 +128,15 @@ defmodule Squints.Poller.Worker do
   defp store_coordinates(%{"lat" => lat, "lng" => lng}) do
     coord = %Geo.Point{coordinates: {lng, lat}, srid: 4326}
     entry = %{alive: true, loc: coord}
-    #query = from b in Bot,
-    #  where: Bot.within(coord, Application.get_env(:squints, :fudge_factor))
-    #result =
-    #  case Repo.one(query) do
-    #    :nil -> %Bot
-    #end
+    query = Bot
+    |> Bot.within(coord, Application.get_env(:squints, :fudge_factor))
+    result =
+      case Repo.one(query) do
+        :nil -> %Bot{}
+        bot -> bot
+      end
+      |> Bot.changeset(entry)
+      |> Repo.insert_or_update
 
     Logger.debug(coord)
   end
