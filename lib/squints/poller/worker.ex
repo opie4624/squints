@@ -44,6 +44,10 @@ defmodule Squints.Poller.Worker do
     GenServer.cast(__MODULE__, :clear_timers)
   end
 
+  def kill_bots do
+    GenServer.cast(__MODULE__, {:kill_bots, []})
+  end
+
   # Server API
 
   def handle_call(:get_timers, _from, state) do
@@ -73,6 +77,11 @@ defmodule Squints.Poller.Worker do
   def handle_cast(:clear_timers, %{table: table, timers: timers}) do
     Enum.each(timers, fn(x) -> Process.cancel_timer(x) end)
     {:noreply, new_state(table, [])}
+  end
+
+  def handle_cast({:kill_bots, exceptions}, state) do
+    kill_bots(exceptions)
+    {:noreply, state}
   end
 
   def handle_info(:poll, state) do
@@ -121,8 +130,9 @@ defmodule Squints.Poller.Worker do
     store_coordinates(coords)
   end
 
-  defp store_coordinates([]), do: :ok
+  defp store_coordinates([]), do: kill_bots([])
   defp store_coordinates(coords) when is_list(coords) do
+    #kill_bots(coords)
     Enum.each(coords, fn(coord) -> store_coordinates(coord) end)
   end
   defp store_coordinates(%{"lat" => lat, "lng" => lng}) do
@@ -144,6 +154,12 @@ defmodule Squints.Poller.Worker do
   defp store_coordinates(coord) do
     Logger.error("Coordinate not in known format.")
     Logger.debug(Poison.encode!(coord))
+  end
+
+  # Eventually kill_bots(exceptions) will leave alive the exceptions
+  defp kill_bots([]) do
+    from(b in Bot, where: b.alive == true)
+    |> Repo.update_all(set: [alive: false])
   end
 
 end
