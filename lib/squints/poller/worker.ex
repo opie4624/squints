@@ -25,6 +25,7 @@ defmodule Squints.Poller.Worker do
 
   def poll do
     GenServer.cast(__MODULE__, :poll)
+  end
 
   def schedule_poll(delay) do
     GenServer.cast(__MODULE__, {:schedule, delay})
@@ -38,18 +39,17 @@ defmodule Squints.Poller.Worker do
     {:noreply, state}
   end
 
-  def handle_cast({:schedule, delay}, %{table: table, timers: timers}) do
-    timer = schedule(delay)
+  def handle_cast({:schedule, delay}, state) do
+    new_timer = schedule(delay)
 
     {:noreply, new_state(state, new_timer)}
   end
 
-  def handle_info(:poll, %{table: table, timers: timers}) do
-    remaining_timers = Enum.filter(timers, fn(x) -> Process.read_timer(x) end)
 
-    do_poll()
+  def handle_info(:poll, state) do
+    poll
 
-    {:noreply, new_state(table, remaining_timers)}
+    {:noreply, state}
   end
 
   # Private API
