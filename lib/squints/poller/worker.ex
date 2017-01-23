@@ -75,7 +75,7 @@ defmodule Squints.Poller.Worker do
   end
 
   def handle_cast(:clear_timers, %{table: table, timers: timers}) do
-    Enum.each(timers, fn(x) -> Process.cancel_timer(x) end)
+    cancel_timers(timers)
     {:noreply, new_state(table, [])}
   end
 
@@ -162,4 +162,7 @@ defmodule Squints.Poller.Worker do
     |> Repo.update_all(set: [alive: false])
   end
 
+  defp cancel_timers(timers) do
+    Enum.each(timers, fn(x) -> Process.cancel_timer(x) end)
+  end
 end
