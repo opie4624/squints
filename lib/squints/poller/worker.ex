@@ -61,6 +61,10 @@ defmodule Squints.Poller.Worker do
     {:reply, timers, state}
   end
 
+  def handle_call(_message, _from, state) do
+    {:noreply, state}
+  end
+
   def handle_cast(:poll, state) do
     do_poll()
     |> handle_json()
@@ -84,9 +88,17 @@ defmodule Squints.Poller.Worker do
     {:noreply, state}
   end
 
+  def handle_cast(_message, state) do
+    {:noreply, state}
+  end
+
   def handle_info(:poll, state) do
     poll()
 
+    {:noreply, state}
+  end
+
+  def handle_info(_message, state) do
     {:noreply, state}
   end
 
