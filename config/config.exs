@@ -11,7 +11,7 @@ config :squints,
 
 config :squints,
   fudge_factor: 1,
-  default_delay: 12 * 60 * 60 * 1000,
+  default_delay: 12,
   location_url: "https://spectacles.com/locations",
   referrer_url: "https://spectacles.com/map/"
 

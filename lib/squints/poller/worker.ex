@@ -114,7 +114,7 @@ defmodule Squints.Poller.Worker do
     Enum.filter(timers, fn(x) -> Process.read_timer(x) end)
   end
 
-  defp schedule(0), do: schedule(Application.get_env(:squints, :default_delay, 60000))
+  defp schedule(0), do: schedule(:rand.uniform(Application.get_env(:squints, :default_delay, 24)*60*60*1000))
   defp schedule(delay), do: Process.send_after(__MODULE__, :poll, delay)
 
   defp do_poll do
