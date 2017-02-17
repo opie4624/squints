@@ -9,7 +9,11 @@ defmodule Squints.Poller.Supervisor do
     table = :ets.new(:poller_timers, [:set, :public, :named_table])
 
     children = [
-      worker(Squints.Poller.Worker, [%{table: table}], [name: Squints.Poller.Worker])
+      worker(
+        Squints.Poller.Worker,
+        [%{table: table}],
+        [name: Squints.Poller.Worker]
+      )
     ]
 
     opts = [strategy: :one_for_one, name: Squints.Poller.Supervisor]

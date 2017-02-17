@@ -22,8 +22,19 @@ defmodule Squints.Bot do
 
   def within(query, point, radius_in_m) do
     {lng, lat} = point.coordinates
-    #from(bot in query, where: st_dwithin(bot.loc, ^point, ^radius_in_m)) # This should work! >:|
-    from(bot in query, where: fragment("ST_DWithin(?::geography, ST_SetSRID(ST_MakePoint(?, ?), ?), ?)", bot.loc, ^lng, ^lat, ^point.srid, ^radius_in_m))
+
+    # This should work! >:|
+    #from(bot in query, where: st_dwithin(bot.loc, ^point, ^radius_in_m))
+    from(bot in query,
+      where: fragment(
+        "ST_DWithin(?::geography, ST_SetSRID(ST_MakePoint(?, ?), ?), ?)",
+        bot.loc,
+        ^lng,
+        ^lat,
+        ^point.srid,
+        ^radius_in_m
+      )
+    )
   end
 
   def order_by_nearest(query, point) do
