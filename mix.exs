@@ -51,6 +51,7 @@ defmodule Squints.Mixfile do
      {:geo, "~> 1.3"},
      {:httpotion, "~> 3.0"},
      {:poison, "~> 2.0 or ~> 3.1"},
+     {:credo, "~> 0.5", only: [:dev, :test]},
      {:cowboy, "~> 1.0"}]
   end
 

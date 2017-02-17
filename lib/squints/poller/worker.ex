@@ -150,6 +150,7 @@ defmodule Squints.Poller.Worker do
     store_coordinates(coords)
   end
 
+  @lint {Credo.Check.Refactor.PipeChainStart, false}
   defp store_coordinates([]), do: kill_bots([])
   defp store_coordinates(coords) when is_list(coords) do
     #kill_bots(coords)
@@ -177,6 +178,7 @@ defmodule Squints.Poller.Worker do
   end
 
   # Eventually kill_bots(exceptions) will leave alive the exceptions
+  @lint {Credo.Check.Refactor.PipeChainStart, false}
   defp kill_bots([]) do
     from(b in Bot, where: b.alive == true)
     |> Repo.update_all(set: [alive: false])
