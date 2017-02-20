@@ -149,6 +149,7 @@ defmodule Squints.Poller.Worker do
     schedule_poll(countdown)
     store_coordinates(coords)
   end
+  defp handle_json({:ok, %{"countdown" => countdown}}), do: schedule_poll(countdown)
 
   @lint {Credo.Check.Refactor.PipeChainStart, false}
   defp store_coordinates([]), do: kill_bots([])
